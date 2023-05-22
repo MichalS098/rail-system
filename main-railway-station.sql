@@ -54,18 +54,40 @@ CREATE TABLE `cities` (
   `longitude` float,  
 );
 
-ALTER TABLE `tickets` ADD FOREIGN KEY (`passenger_id`) REFERENCES `passengers` (`id`);
+ALTER TABLE `tickets` ADD FOREIGN KEY (`passenger_id`) REFERENCES `passengers` (`id`) ON DELETE CASCADE;
+ALTER TABLE `tickets` ADD FOREIGN KEY (`train_id`) REFERENCES `trains` (`id`) ON DELETE CASCADE;
+ALTER TABLE `trains` ADD FOREIGN KEY (`carrier_id`) REFERENCES `carriers` (`id`) ON DELETE CASCADE;
+ALTER TABLE `employees` ADD FOREIGN KEY (`carrier_id`) REFERENCES `carriers` (`id`) ON DELETE CASCADE;
+ALTER TABLE `routes` ADD FOREIGN KEY (`id`) REFERENCES `city_route` (`route_id`) ON DELETE CASCADE;
+ALTER TABLE `cities` ADD FOREIGN KEY (`id`) REFERENCES `city_route` (`city_id`) ON DELETE CASCADE;
+ALTER TABLE `routes` ADD FOREIGN KEY (`id`) REFERENCES `schedules` (`route_id`) ON DELETE CASCADE;
+ALTER TABLE `trains` ADD FOREIGN KEY (`schedule_id`) REFERENCES `schedules` (`id`) ON DELETE CASCADE;
 
-ALTER TABLE `tickets` ADD FOREIGN KEY (`train_id`) REFERENCES `trains` (`id`);
 
-ALTER TABLE `trains` ADD FOREIGN KEY (`carrier_id`) REFERENCES `carriers` (`id`);
+DELIMITER $$
+CREATE PROCEDURE create_ticket(IN p_passenger_id INT, IN p_train_id INT)
+BEGIN
+    INSERT INTO tickets (passenger_id, train_id) VALUES (p_passenger_id, p_train_id);
+END$$
+DELIMITER ;
 
-ALTER TABLE `employees` ADD FOREIGN KEY (`carrier_id`) REFERENCES `carriers` (`id`);
+DELIMITER $$
+CREATE PROCEDURE cancel_ticket(IN p_passenger_id INT, IN p_train_id INT)
+BEGIN
+    DELETE FROM tickets WHERE passenger_id = p_passenger_id AND train_id = p_train_id;
+END$$
+DELIMITER ;
 
-ALTER TABLE `routes` ADD FOREIGN KEY (`id`) REFERENCES `city_route` (`route_id`);
+DELIMITER $$
+CREATE PROCEDURE get_available_seats(IN p_train_id INT)
+BEGIN
+    SELECT number_of_seats - COUNT(*) as available_seats
+    FROM trains
+    JOIN tickets ON trains.id = tickets.train_id
+    WHERE trains.id = p_train_id;
+END$$
+DELIMITER ;
 
-ALTER TABLE `cities` ADD FOREIGN KEY (`id`) REFERENCES `city_route` (`city_id`);
+```
 
-ALTER TABLE `routes` ADD FOREIGN KEY (`id`) REFERENCES `schedules` (`route_id`);
 
-ALTER TABLE `trains` ADD FOREIGN KEY (`schedule_id`) REFERENCES `schedules` (`id`);

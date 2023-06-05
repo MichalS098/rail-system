@@ -1,67 +1,81 @@
+DROP TABLE IF EXISTS `employees`;
+DROP TABLE IF EXISTS `schedules`;
+DROP TABLE IF EXISTS `carriers`;
+DROP TABLE IF EXISTS `trains`;
+DROP TABLE IF EXISTS `tickets`;
+DROP TABLE IF EXISTS `passengers`;
+DROP TABLE IF EXISTS `routes`;
+DROP TABLE IF EXISTS `city_route`;
+DROP TABLE IF EXISTS `cities`;
+
+DROP PROCEDURE IF EXISTS `create_ticket`;
+DROP PROCEDURE IF EXISTS `cancel_ticket`;
+DROP PROCEDURE IF EXISTS `get_available_seats`;
+
 CREATE TABLE `employees` (
-  `id` integer PRIMARY KEY,
+  `id` int PRIMARY KEY,
   `first_name` varchar(255),
   `last_name` varchar(255),
-  `email` unique varchar(255),
-  `carrier_id` integer
+  `email` varchar(255) UNIQUE,
+  `carrier_id` int
 );
 
 CREATE TABLE `schedules` (
-  `id` integer PRIMARY KEY,
+  `id` int PRIMARY KEY,
   `start_time` time,
-  `route_id` integer
+  `route_id` int
 );
 
 CREATE TABLE `carriers` (
-  `id` integer PRIMARY KEY,
+  `id` int PRIMARY KEY,
   `name` varchar(255)
 );
 
 CREATE TABLE `trains` (
-  `id` integer PRIMARY KEY,
-  `number_of_seats` integer,
+  `id` int PRIMARY KEY,
+  `number_of_seats` int,
   `model` varchar(255),
-  `carrier_id` integer,
-  `schedule_id` integer
+  `carrier_id` int,
+  `schedule_id` int
 );
 
 CREATE TABLE `tickets` (
-  `train_id` integer,
-  `passenger_id` integer
+  `train_id` int,
+  `passenger_id` int
 );
 
 CREATE TABLE `passengers` (
-  `id` integer PRIMARY KEY,
+  `id` int PRIMARY KEY,
   `first_name` varchar(255),
   `last_name` varchar(255),
-  `discount` integer
+  `discount` int
 );
 
 CREATE TABLE `routes` (
-  `id` integer PRIMARY KEY
+  `id` int PRIMARY KEY
 );
 
 CREATE TABLE `city_route` (
-  `route_id` integer,
-  `city_id` integer,
-  `city_order` integer
+  `route_id` int,
+  `city_id` int,
+  `city_order` int
 );
 
 CREATE TABLE `cities` (
-  `id` integer PRIMARY KEY,
+  `id` int PRIMARY KEY,
   `name` varchar(255),
   `latitude` float,
-  `longitude` float,  
+  `longitude` float
 );
 
 ALTER TABLE `tickets` ADD FOREIGN KEY (`passenger_id`) REFERENCES `passengers` (`id`) ON DELETE CASCADE;
 ALTER TABLE `tickets` ADD FOREIGN KEY (`train_id`) REFERENCES `trains` (`id`) ON DELETE CASCADE;
 ALTER TABLE `trains` ADD FOREIGN KEY (`carrier_id`) REFERENCES `carriers` (`id`) ON DELETE CASCADE;
 ALTER TABLE `employees` ADD FOREIGN KEY (`carrier_id`) REFERENCES `carriers` (`id`) ON DELETE CASCADE;
-ALTER TABLE `routes` ADD FOREIGN KEY (`id`) REFERENCES `city_route` (`route_id`) ON DELETE CASCADE;
-ALTER TABLE `cities` ADD FOREIGN KEY (`id`) REFERENCES `city_route` (`city_id`) ON DELETE CASCADE;
-ALTER TABLE `routes` ADD FOREIGN KEY (`id`) REFERENCES `schedules` (`route_id`) ON DELETE CASCADE;
+ALTER TABLE `schedules` ADD FOREIGN KEY (`route_id`) REFERENCES `routes` (`id`) ON DELETE CASCADE;
 ALTER TABLE `trains` ADD FOREIGN KEY (`schedule_id`) REFERENCES `schedules` (`id`) ON DELETE CASCADE;
+ALTER TABLE `city_route` ADD FOREIGN KEY (`route_id`) REFERENCES `routes` (`id`) ON DELETE CASCADE;
+ALTER TABLE `city_route` ADD FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`) ON DELETE CASCADE;
 
 
 DELIMITER $$
@@ -87,7 +101,3 @@ BEGIN
     WHERE trains.id = p_train_id;
 END$$
 DELIMITER ;
-
-```
-
-

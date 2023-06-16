@@ -1,5 +1,5 @@
 <template>
-    <Head  :title="title"/>
+    <Head :title="title" />
     <div>
         <HeaderSection />
         <slot />
@@ -7,7 +7,7 @@
 </template>
 <script setup>
 import HeaderSection from '../Components/HeaderSection.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 
 const props = defineProps({
     title: {

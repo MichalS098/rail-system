@@ -19,8 +19,6 @@ use App\Models\City;
 */
 
 Route::get('/', function () {
-    dd(Carrier::with('trains')->get());
-
     return Inertia::render('Home');
 });
 

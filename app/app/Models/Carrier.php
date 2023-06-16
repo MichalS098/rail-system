@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Carrier extends Model
 {
     use HasFactory;
+
+    public function trains()
+    {
+        return $this->hasMany(Train::class);
+    }
 }

@@ -22,6 +22,8 @@ class TrainController extends Controller
         // // 
         // return 
         // return test success
+
+        
      
 
         return back()->with('success', 'Train is available');

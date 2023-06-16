@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('city_route', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('city_id')->constrained('cities');
+            $table->foreignId('route_id')->constrained('routes');
             $table->timestamps();
         });
     }

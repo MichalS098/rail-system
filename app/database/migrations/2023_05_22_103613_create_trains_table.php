@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('trains', function (Blueprint $table) {
             $table->id();
+            $table->string('model');
+            $table->integer('capacity');
+            $table->foreignId('carrier_id')->constrained('carriers')->cascadeOnDelete();
+            $table->foreignId('schedule_id')->nullable()->constrained('schedules')->cascadeOnDelete();
             $table->timestamps();
         });
     }

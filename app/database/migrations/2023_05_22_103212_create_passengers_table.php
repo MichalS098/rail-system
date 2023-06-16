@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('passengers', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('surname');
+            $table->integer('discount');
             $table->timestamps();
         });
     }

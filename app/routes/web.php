@@ -4,6 +4,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\TrainController;
+use App\Models\Carrier;
+use App\Models\City;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,8 @@ use App\Http\Controllers\TrainController;
 */
 
 Route::get('/', function () {
+    dd(Carrier::with('trains')->get());
+
     return Inertia::render('Home');
 });
 
